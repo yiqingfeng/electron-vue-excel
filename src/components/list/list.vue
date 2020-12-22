@@ -20,13 +20,8 @@
             :key="column.data"
             :prop="column.data"
             :label="column.label"
-            width="100"
+            min-width="100"
           ></el-table-column>
-          <el-table-column prop="date" label="日期" width="180">
-          </el-table-column>
-          <el-table-column prop="name" label="姓名" width="180">
-          </el-table-column>
-          <el-table-column prop="address" label="地址"> </el-table-column>
         </el-table>
       </div>
     </div>
@@ -42,37 +37,59 @@
 
 <script>
 // 列表页组件
+import { mapGetters } from 'vuex';
 
 export default {
   name: "d-list",
   props: {
     dataKey: String,
   },
+  computed: {
+    ...mapGetters([
+      'sheetLists'
+    ]),
+    sheetData() {
+      const sheetLists = this.sheetLists;
+      console.log(sheetLists[0]);
+      return sheetLists[0] || {};
+    },
+    columns() {
+      const keys = this.sheetData.keys || [];
+      return keys.map(i => {
+        return {
+          label: i,
+          data: i,
+        };
+      });
+    },
+    tableData() {
+      return this.sheetData.data || [];
+    },
+  },
   data() {
     return {
-      columns: [],
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
+      // tableData: [
+      //   {
+      //     date: "2016-05-02",
+      //     name: "王小虎",
+      //     address: "上海市普陀区金沙江路 1518 弄",
+      //   },
+      //   {
+      //     date: "2016-05-04",
+      //     name: "王小虎",
+      //     address: "上海市普陀区金沙江路 1517 弄",
+      //   },
+      //   {
+      //     date: "2016-05-01",
+      //     name: "王小虎",
+      //     address: "上海市普陀区金沙江路 1519 弄",
+      //   },
+      //   {
+      //     date: "2016-05-03",
+      //     name: "王小虎",
+      //     address: "上海市普陀区金沙江路 1516 弄",
+      //   },
+      // ],
     };
   },
   methods: {},
