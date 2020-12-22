@@ -72,7 +72,7 @@ export default {
   },
   watch: {
     curtSheetData(val) {
-      this.curtKeys = val.keys;
+      this.curtKeys = _.clone(val.keys || []);
       this.getDataList();
     },
     filters() {
@@ -83,10 +83,9 @@ export default {
     return {
       filters: {},
       curtKeys: [],
-      // tableData: [],
       dataList: [],
       curtPage: 1,
-      pageSize: 10,
+      pageSize: 20,
     };
   },
   mounted() {
@@ -129,17 +128,15 @@ export default {
     getDataList: _.debounce(function () {
       this.dataList = this.caclDataList();
     }, 10),
-    // getDataList() {
-    //   console.log(_.debounce);
-    //   this.dataList = this.caclDataList();
-    // },
+    // 切页展示数
     pageSizeChange(val) {
       this.curtPage = 1;
       this.pageSize = val;
     },
+    // 切页数
     curtPageChange(val) {
       this.curtPage = val;
-    }
+    },
   },
 };
 </script>
