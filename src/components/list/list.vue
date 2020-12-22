@@ -1,9 +1,9 @@
 <template>
   <div class="m-list">
     <div class="list-filters">
-      <el-button size="medium">筛选</el-button>
-      <el-button size="medium">列设置</el-button>
-      <el-button size="medium">合计设置</el-button>
+      <el-button size="medium" @click="setFilters">筛选</el-button>
+      <el-button size="medium" @click="setColumns">列设置</el-button>
+      <el-button size="medium" @click="setTotal">合计设置</el-button>
     </div>
     <div class="list-body">
       <div class="list-table_wrap">
@@ -28,9 +28,13 @@
     <el-pagination
       class="list-foot"
       background
-      layout="prev, pager, next"
-      :total="1000"
-    >
+      @size-change="pageSizeChange"
+      @current-change="curtPageChange"
+      :current-page="curtPage"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="dataList.length">
     </el-pagination>
   </div>
 </template>
@@ -38,23 +42,22 @@
 <script>
 // 列表页组件
 import { mapGetters } from 'vuex';
+import showTransferDialog from '../transfer/index';
 
 export default {
   name: "d-list",
-  props: {
-    dataKey: String,
-  },
   computed: {
     ...mapGetters([
-      'sheetLists'
+      'curtSheetData',
     ]),
-    sheetData() {
-      const sheetLists = this.sheetLists;
-      console.log(sheetLists[0]);
-      return sheetLists[0] || {};
+    keys() {
+      return this.curtSheetData.keys || [];
     },
     columns() {
-      const keys = this.sheetData.keys || [];
+      let keys = this.curtKeys || [];
+      if (_.isEmpty(keys)) {
+        keys = this.keys;
+      }
       return keys.map(i => {
         return {
           label: i,
@@ -63,36 +66,81 @@ export default {
       });
     },
     tableData() {
-      return this.sheetData.data || [];
+      const start = (this.curtPage - 1) * this.pageSize;
+      return this.dataList.slice(start, start + this.pageSize);
+    },
+  },
+  watch: {
+    curtSheetData(val) {
+      this.curtKeys = val.keys;
+      this.getDataList();
+    },
+    filters() {
+      this.getDataList();
     },
   },
   data() {
     return {
-      // tableData: [
-      //   {
-      //     date: "2016-05-02",
-      //     name: "王小虎",
-      //     address: "上海市普陀区金沙江路 1518 弄",
-      //   },
-      //   {
-      //     date: "2016-05-04",
-      //     name: "王小虎",
-      //     address: "上海市普陀区金沙江路 1517 弄",
-      //   },
-      //   {
-      //     date: "2016-05-01",
-      //     name: "王小虎",
-      //     address: "上海市普陀区金沙江路 1519 弄",
-      //   },
-      //   {
-      //     date: "2016-05-03",
-      //     name: "王小虎",
-      //     address: "上海市普陀区金沙江路 1516 弄",
-      //   },
-      // ],
+      filters: {},
+      curtKeys: [],
+      // tableData: [],
+      dataList: [],
+      curtPage: 1,
+      pageSize: 10,
     };
   },
-  methods: {},
+  mounted() {
+    this.getDataList();
+  },
+  methods: {
+    // 设置数据筛选条件
+    setFilters() {
+
+    },
+    // 设置需要展示的列
+    setColumns() {
+      showTransferDialog({
+        items: this.keys.map(i => {
+          return {
+            label: i,
+            key: i,
+            // disabled: false,
+          };
+        }),
+        value: this.curtKeys,
+      }, keys => {
+        this.curtKeys = keys;
+      })
+    },
+    // 设置需要进行合计的列
+    setTotal() {
+
+    },
+    /**
+     * @description 表格相关数据计算
+     */
+    caclDataList() {
+      const list = this.curtSheetData.data || [];
+      return list;
+    },
+    /**
+     * @description 获取 dataList
+     */
+    getDataList: _.debounce(function () {
+      this.dataList = this.caclDataList();
+    }, 10),
+    // getDataList() {
+    //   console.log(_.debounce);
+    //   this.dataList = this.caclDataList();
+    // },
+    pageSizeChange(val) {
+      this.curtPage = 1;
+      this.pageSize = val;
+    },
+    curtPageChange(val) {
+      this.curtPage = val;
+    }
+  },
 };
 </script>
 

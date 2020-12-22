@@ -17,6 +17,7 @@
     "element-ui": "^2.14.1",
     "less": "^4.0.0",
     "less-loader": "^7.1.0",
+    "lodash": "^4.17.20",
     "vue": "^2.6.11",
     "vuex": "^3.4.0",
     "xlsx": "^0.16.9"
@@ -46,7 +47,10 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {},
+    "globals": {
+      "_": true
+    }
   },
   "browserslist": [
     "> 1%",

@@ -21,6 +21,12 @@ export default new Vuex.Store({
     sheetNames(state) {
       return state.sheetLists.map(i => i.name);
     },
+    curtSheetData(state) {
+      const curtSheetName = state.curtSheet;
+      return state.sheetLists.find(sheet => {
+        return sheet.name === curtSheetName;
+      }) || {};
+    },
   },
   mutations: {
     setSheetLists(state, list) {
