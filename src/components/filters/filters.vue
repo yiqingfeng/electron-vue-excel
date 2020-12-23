@@ -40,21 +40,7 @@ export default {
   },
   props: {
     title: String,
-    fields: {
-      type: Array,
-      default() {
-        return [
-          {
-            label: "字段A",
-            value: "a",
-          },
-          {
-            label: "字段B",
-            value: "b",
-          },
-        ];
-      },
-    },
+    fields: Array,
     isShow: Boolean,
     filterList: Array,
   },

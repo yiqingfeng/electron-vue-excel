@@ -8,14 +8,20 @@
         }}</span></el-button
       >
       <el-button size="small" @click="setColumns">列设置</el-button>
-      <el-button size="small" @click="setTotal">合计设置</el-button>
       <filters
         title="设置筛选条件"
         :is-show.sync="showFilters"
         :filter-list="filterList"
-        :fields="filterFields"
+        :fields="fieldOptions"
         @confirm="filterList = $event"
       ></filters>
+      <total-settings
+        title="设置统计信息"
+        :is-show.sync="showTotalSettings"
+        :fields="fieldOptions"
+        :value="totalSettings"
+        @confirm="totalSettings = $event"
+      ></total-settings>
     </div>
     <div class="list-body">
       <div class="list-table_wrap">
@@ -55,22 +61,24 @@
 <script>
 // 列表页组件
 import { mapGetters } from "vuex";
-import Filters from "../filters/filters";
+import Filters from "../filters/filters.vue";
+import TotalSettings from "./total-setting.vue";
 import showTransferDialog from "../transfer/index";
-import { 
-  isMatchForOperatorData
-} from '../../common/utils';
+import { isMatchForOperatorData } from "../../common/utils";
 
 export default {
   name: "d-list",
   components: {
     Filters,
+    TotalSettings,
   },
   data() {
     return {
       showFilters: false,
       filterList: [],
       curtKeys: [],
+      showTotalSettings: false,
+      totalSettings: {},
       dataList: [],
       curtPage: 1,
       pageSize: 20,
@@ -81,8 +89,8 @@ export default {
     keys() {
       return this.curtSheetData.keys || [];
     },
-    filterFields() {
-      return this.keys.map(i => {
+    fieldOptions() {
+      return this.keys.map((i) => {
         return {
           label: i,
           value: i,
@@ -141,13 +149,19 @@ export default {
     },
     // 设置需要进行合计的列
     setTotal() {},
-    // 
+    //
     getFilterFn() {
       const filterList = this.filterList || [];
       return function (item) {
         let flag = true;
-        for(let filter of filterList) {
-          if (!isMatchForOperatorData(filter.operator, item[filter.field_name], filter.field_values)) {
+        for (let filter of filterList) {
+          if (
+            !isMatchForOperatorData(
+              filter.operator,
+              item[filter.field_name],
+              filter.field_values
+            )
+          ) {
             flag = false;
             break;
           }
