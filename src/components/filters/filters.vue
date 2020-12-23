@@ -102,16 +102,15 @@ export default {
       if (
         this.list.find((i) => {
           if (
-            !_.isEmpty(i) &&
-            !(
-              i.field_name &&
+            _.isEmpty(i) || !i.field_name ||
+            (
               i.operator &&
               (["IS", "NIS"].includes(i.operator) || i.field_values)
             )
           ) {
-            return true;
+            return false;
           }
-          return false;
+          return true;
         })
       ) {
         this.$message.error("筛选条件不完整");
@@ -126,7 +125,7 @@ export default {
       this.switchDialogVisible(false);
       this.$emit(
         "confirm",
-        this.list.filter((i) => !_.isEmpty(i))
+        this.list.filter((i) => i.field_name)
       );
     },
     // 关闭

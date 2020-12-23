@@ -13,6 +13,7 @@
         title="设置筛选条件"
         :is-show.sync="showFilters"
         :filter-list="filterList"
+        :fields="filterFields"
         @confirm="filterList = $event"
       ></filters>
     </div>
@@ -56,6 +57,9 @@
 import { mapGetters } from "vuex";
 import Filters from "../filters/filters";
 import showTransferDialog from "../transfer/index";
+import { 
+  isMatchForOperatorData
+} from '../../common/utils';
 
 export default {
   name: "d-list",
@@ -76,6 +80,14 @@ export default {
     ...mapGetters(["curtSheetData"]),
     keys() {
       return this.curtSheetData.keys || [];
+    },
+    filterFields() {
+      return this.keys.map(i => {
+        return {
+          label: i,
+          value: i,
+        };
+      });
     },
     columns() {
       let keys = this.curtKeys || [];
@@ -99,9 +111,9 @@ export default {
       this.curtKeys = _.clone(val.keys || []);
       this.getDataList();
     },
-    // filterList() {
-    //   this.getDataList();
-    // },
+    filterList() {
+      this.getDataList();
+    },
   },
   mounted() {
     this.getDataList();
@@ -129,11 +141,25 @@ export default {
     },
     // 设置需要进行合计的列
     setTotal() {},
+    // 
+    getFilterFn() {
+      const filterList = this.filterList || [];
+      return function (item) {
+        let flag = true;
+        for(let filter of filterList) {
+          if (!isMatchForOperatorData(filter.operator, item[filter.field_name], filter.field_values)) {
+            flag = false;
+            break;
+          }
+        }
+        return flag;
+      };
+    },
     /**
      * @description 表格相关数据计算
      */
     caclDataList() {
-      const list = this.curtSheetData.data || [];
+      const list = (this.curtSheetData.data || []).filter(this.getFilterFn());
       return list;
     },
     /**
