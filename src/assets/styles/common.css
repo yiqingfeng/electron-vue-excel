@@ -304,3 +304,12 @@ template {
 [hidden] {
   display: none;
 }
+.m-c-dialog .el-dialog__header {
+  padding: 20px 16px 0;
+}
+.m-c-dialog .el-dialog__body {
+  padding: 16px;
+}
+.m-c-dialog .el-dialog__footer {
+  padding: 0 16px 20px;
+}

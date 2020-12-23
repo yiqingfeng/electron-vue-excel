@@ -1,9 +1,20 @@
 <template>
   <div class="m-list">
     <div class="list-filters">
-      <el-button size="medium" @click="setFilters">筛选</el-button>
-      <el-button size="medium" @click="setColumns">列设置</el-button>
-      <el-button size="medium" @click="setTotal">合计设置</el-button>
+      <el-button size="small" @click="showFilters = true"
+        >筛选
+        <span v-show="filterList.length > 0" class="tip-number">{{
+          filterList.length
+        }}</span></el-button
+      >
+      <el-button size="small" @click="setColumns">列设置</el-button>
+      <el-button size="small" @click="setTotal">合计设置</el-button>
+      <filters
+        title="设置筛选条件"
+        :is-show.sync="showFilters"
+        :filter-list="filterList"
+        @confirm="filterList = $event"
+      ></filters>
     </div>
     <div class="list-body">
       <div class="list-table_wrap">
@@ -34,22 +45,35 @@
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="dataList.length">
+      :total="dataList.length"
+    >
     </el-pagination>
   </div>
 </template>
 
 <script>
 // 列表页组件
-import { mapGetters } from 'vuex';
-import showTransferDialog from '../transfer/index';
+import { mapGetters } from "vuex";
+import Filters from "../filters/filters";
+import showTransferDialog from "../transfer/index";
 
 export default {
   name: "d-list",
+  components: {
+    Filters,
+  },
+  data() {
+    return {
+      showFilters: false,
+      filterList: [],
+      curtKeys: [],
+      dataList: [],
+      curtPage: 1,
+      pageSize: 20,
+    };
+  },
   computed: {
-    ...mapGetters([
-      'curtSheetData',
-    ]),
+    ...mapGetters(["curtSheetData"]),
     keys() {
       return this.curtSheetData.keys || [];
     },
@@ -58,7 +82,7 @@ export default {
       if (_.isEmpty(keys)) {
         keys = this.keys;
       }
-      return keys.map(i => {
+      return keys.map((i) => {
         return {
           label: i,
           data: i,
@@ -75,46 +99,36 @@ export default {
       this.curtKeys = _.clone(val.keys || []);
       this.getDataList();
     },
-    filters() {
-      this.getDataList();
-    },
-  },
-  data() {
-    return {
-      filters: {},
-      curtKeys: [],
-      dataList: [],
-      curtPage: 1,
-      pageSize: 20,
-    };
+    // filterList() {
+    //   this.getDataList();
+    // },
   },
   mounted() {
     this.getDataList();
   },
   methods: {
     // 设置数据筛选条件
-    setFilters() {
-
-    },
+    setFilters() {},
     // 设置需要展示的列
     setColumns() {
-      showTransferDialog({
-        items: this.keys.map(i => {
-          return {
-            label: i,
-            key: i,
-            // disabled: false,
-          };
-        }),
-        value: this.curtKeys,
-      }, keys => {
-        this.curtKeys = keys;
-      })
+      showTransferDialog(
+        {
+          items: this.keys.map((i) => {
+            return {
+              label: i,
+              key: i,
+              // disabled: false,
+            };
+          }),
+          value: this.curtKeys,
+        },
+        (keys) => {
+          this.curtKeys = keys;
+        }
+      );
     },
     // 设置需要进行合计的列
-    setTotal() {
-
-    },
+    setTotal() {},
     /**
      * @description 表格相关数据计算
      */
@@ -150,6 +164,15 @@ export default {
   .list-filters {
     margin-bottom: 10px;
   }
+  .tip-number {
+    display: inline-block;
+    padding: 0 5px;
+    margin-left: 4px;
+    background-color: #409eff;
+    color: #fff;
+    border-radius: 2px;
+  }
+
   .list-body {
     flex: 1;
     position: relative;
