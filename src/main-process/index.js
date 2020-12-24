@@ -7,6 +7,7 @@ import {
 import {
   registerChannels,
   xlsx2json,
+  writeExcelData,
 } from './utils';
 /**
  * @description 创建 excel 文件选择器
@@ -27,6 +28,11 @@ function createExcelDialog() {
   });
 }
 
+/**
+ * @description 创建 excel 文件保存器
+ */
+
+
 export default function preLoad() {
   const getExcelDataListener = (event) => {
     createExcelDialog()
@@ -35,9 +41,26 @@ export default function preLoad() {
       })
   }
 
+  const exportExcelDataListener = (event, data) => {
+    dialog.showSaveDialog({
+      title: '保存Excel文件',
+      defaultPath: '导出文件.xlsx',
+      filters: [{
+        name: 'All Files',
+        extensions: ['xls', 'xlsx']
+      }],
+    })
+    .then(file => {
+      writeExcelData(file.filePath, data);
+    });
+  }
+
   registerChannels({
     'main-get_excel_data': {
       listener: getExcelDataListener,
     },
+    'main-export_excel_file': {
+      listener: exportExcelDataListener,
+    }
   });
 }

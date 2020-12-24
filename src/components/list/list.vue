@@ -14,7 +14,9 @@
           class="el-icon-finished el-icon--right"
         ></i
       ></el-button>
-      <el-button size="small" type="primary">数据导出</el-button>
+      <el-button size="small" type="primary" @click="exportExcel"
+        >数据导出</el-button
+      >
       <filters
         title="设置筛选条件"
         :is-show.sync="showFilters"
@@ -72,6 +74,7 @@ import Filters from "../filters/filters.vue";
 import TotalSettings from "./total-setting.vue";
 import showTransferDialog from "../transfer/index";
 import { isMatchForOperatorData, dataSum } from "../../common/utils";
+import { sendMessageToMain } from "../../data/index";
 
 export default {
   name: "d-list",
@@ -92,7 +95,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["curtSheetData"]),
+    ...mapGetters(["curtSheetData", "curtSheet"]),
     keys() {
       return this.curtSheetData.keys || [];
       // return ["字段a", "字段b", "字段c"];
@@ -124,8 +127,8 @@ export default {
       });
       if (this.isNotEmptyTotalSettings) {
         columns.push({
-          label: '合计',
-          data: '_total',
+          label: "合计",
+          data: "合计",
         });
       }
       return columns;
@@ -197,7 +200,7 @@ export default {
         const totalField = this.totalSettings.totalField;
         // 按照指定字段分组
         let groupMap = {};
-        list.forEach(item => {
+        list.forEach((item) => {
           if (!groupMap[item[groupField]]) {
             groupMap[item[groupField]] = {
               data: item,
@@ -206,9 +209,9 @@ export default {
           }
           groupMap[item[groupField]].total.push(item[totalField]);
         });
-        list = Object.keys(groupMap).map(key => {
+        list = Object.keys(groupMap).map((key) => {
           return Object.assign({}, groupMap[key].data, {
-            _total: dataSum(groupMap[key].total),
+            合计: dataSum(groupMap[key].total),
           });
         });
       }
@@ -229,6 +232,15 @@ export default {
     changeTotalSettings(data) {
       this.totalSettings = data;
       this.getDataList();
+    },
+    // 导出 excel 文件
+    exportExcel() {
+      sendMessageToMain("main-export_excel_file", {
+        [this.curtSheet]: {
+          keys: this.columns.map((i) => i.data),
+          data: this.dataList,
+        },
+      });
     },
     // 切页展示数
     pageSizeChange(val) {
