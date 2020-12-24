@@ -88,11 +88,10 @@ export default {
       if (
         this.list.find((i) => {
           if (
-            _.isEmpty(i) || !i.field_name ||
-            (
-              i.operator &&
-              (["IS", "NIS"].includes(i.operator) || i.field_values)
-            )
+            _.isEmpty(i) ||
+            !i.field_name ||
+            (i.operator &&
+              (["IS", "NIS"].includes(i.operator) || i.field_values))
           ) {
             return false;
           }

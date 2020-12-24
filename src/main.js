@@ -4,8 +4,8 @@
 import Vue from 'vue';
 import Lodash from 'lodash'
 import ElementUI from 'element-ui';
-import './assets/styles/common.css';
 import 'element-ui/lib/theme-chalk/index.css';
+import './assets/styles/common.css';
 
 // import App from './App.vue';
 import App from './pages/data.vue';

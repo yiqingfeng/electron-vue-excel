@@ -2,31 +2,38 @@
   <div class="m-list">
     <div class="list-filters">
       <el-button size="small" @click="showFilters = true"
-        >筛选
-        <span v-show="filterList.length > 0" class="tip-number">{{
-          filterList.length
-        }}</span></el-button
-      >
+        >筛选<i
+          v-show="filterList.length > 0"
+          class="el-icon-finished el-icon--right"
+        ></i
+      ></el-button>
       <el-button size="small" @click="setColumns">列设置</el-button>
+      <el-button size="small" @click="showTotalSettings = true"
+        >合计设置<i
+          v-show="isNotEmptyTotalSettings"
+          class="el-icon-finished el-icon--right"
+        ></i
+      ></el-button>
+      <el-button size="small" type="primary">数据导出</el-button>
       <filters
         title="设置筛选条件"
         :is-show.sync="showFilters"
         :filter-list="filterList"
         :fields="fieldOptions"
-        @confirm="filterList = $event"
+        @confirm="changeFilterList"
       ></filters>
       <total-settings
-        title="设置统计信息"
+        title="设置合计信息"
         :is-show.sync="showTotalSettings"
         :fields="fieldOptions"
         :value="totalSettings"
-        @confirm="totalSettings = $event"
+        @confirm="changeTotalSettings"
       ></total-settings>
     </div>
     <div class="list-body">
       <div class="list-table_wrap">
         <el-table
-          class="list-table"
+          class="c-table list-table"
           border
           stripe
           :data="tableData"
@@ -64,7 +71,7 @@ import { mapGetters } from "vuex";
 import Filters from "../filters/filters.vue";
 import TotalSettings from "./total-setting.vue";
 import showTransferDialog from "../transfer/index";
-import { isMatchForOperatorData } from "../../common/utils";
+import { isMatchForOperatorData, dataSum } from "../../common/utils";
 
 export default {
   name: "d-list",
@@ -88,26 +95,40 @@ export default {
     ...mapGetters(["curtSheetData"]),
     keys() {
       return this.curtSheetData.keys || [];
+      // return ["字段a", "字段b", "字段c"];
+    },
+    isNotEmptyTotalSettings() {
+      const data = this.totalSettings;
+      if (data && data.groupField && data.totalField) return true;
+      return false;
     },
     fieldOptions() {
-      return this.keys.map((i) => {
+      let options = this.keys.map((i) => {
         return {
           label: i,
           value: i,
         };
       });
+      return options;
     },
     columns() {
       let keys = this.curtKeys || [];
       if (_.isEmpty(keys)) {
         keys = this.keys;
       }
-      return keys.map((i) => {
+      let columns = keys.map((i) => {
         return {
           label: i,
           data: i,
         };
       });
+      if (this.isNotEmptyTotalSettings) {
+        columns.push({
+          label: '合计',
+          data: '_total',
+        });
+      }
+      return columns;
     },
     tableData() {
       const start = (this.curtPage - 1) * this.pageSize;
@@ -117,9 +138,6 @@ export default {
   watch: {
     curtSheetData(val) {
       this.curtKeys = _.clone(val.keys || []);
-      this.getDataList();
-    },
-    filterList() {
       this.getDataList();
     },
   },
@@ -173,7 +191,27 @@ export default {
      * @description 表格相关数据计算
      */
     caclDataList() {
-      const list = (this.curtSheetData.data || []).filter(this.getFilterFn());
+      let list = (this.curtSheetData.data || []).filter(this.getFilterFn());
+      if (this.isNotEmptyTotalSettings) {
+        const groupField = this.totalSettings.groupField;
+        const totalField = this.totalSettings.totalField;
+        // 按照指定字段分组
+        let groupMap = {};
+        list.forEach(item => {
+          if (!groupMap[item[groupField]]) {
+            groupMap[item[groupField]] = {
+              data: item,
+              total: [],
+            };
+          }
+          groupMap[item[groupField]].total.push(item[totalField]);
+        });
+        list = Object.keys(groupMap).map(key => {
+          return Object.assign({}, groupMap[key].data, {
+            _total: dataSum(groupMap[key].total),
+          });
+        });
+      }
       return list;
     },
     /**
@@ -182,6 +220,16 @@ export default {
     getDataList: _.debounce(function () {
       this.dataList = this.caclDataList();
     }, 10),
+    // 筛选条件变更
+    changeFilterList(data) {
+      this.filterList = data;
+      this.getDataList();
+    },
+    // 合计设置变更
+    changeTotalSettings(data) {
+      this.totalSettings = data;
+      this.getDataList();
+    },
     // 切页展示数
     pageSizeChange(val) {
       this.curtPage = 1;

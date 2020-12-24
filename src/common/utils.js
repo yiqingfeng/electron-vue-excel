@@ -1,6 +1,7 @@
 /**
  * @description 通用处理
  */
+import floatCalculate from './floatcalculate';
 /**
  * @description 获取字段操作符的数据
  */
@@ -62,4 +63,15 @@ export function isMatchForOperatorData(operator, data, target) {
     return true
   };
   return action(data, target);
+}
+
+// 数据列表求和，保证返回结果精度
+export function dataSum(list = []) {
+  const numbers = list.map(i => {
+    return isNaN(i) ? 0 : i;
+  });
+  return floatCalculate.setNumberDecimal(
+    floatCalculate.expCalc(numbers.join('+')),
+    floatCalculate.getMaxNumberDecimal(numbers)
+  );
 }

@@ -6,44 +6,54 @@
     width="600px"
     :before-close="handleClose"
   >
-    <div class="total-group">
-      <label class="total-field_label">分组字段</label>
-      <el-select
-        v-model="groupField"
-        clearable
-        filterable
-        size="small"
-        placeholder="请选择"
-      >
-        <el-option
-          v-for="item in fields"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+    <div class="c-form">
+      <div class="c-form_item total-group">
+        <label
+          class="c-form_item-label c-form_item-label--required total-field_label"
+          >分组字段</label
         >
-        </el-option>
-      </el-select>
-    </div>
-    <div class="total-field">
-      <label class="total-field_label">待合计字段</label>
-      <el-select
-        v-model="totalField"
-        clearable
-        filterable
-        size="small"
-        placeholder="请选择"
-      >
-        <el-option
-          v-for="item in fields"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+        <el-select
+          class="c-form_item-content"
+          v-model="inputValue.groupField"
+          clearable
+          filterable
+          size="small"
+          placeholder="请选择"
         >
-        </el-option>
-      </el-select>
+          <el-option
+            v-for="item in fields"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </div>
+      <div class="c-form_item total-field">
+        <label
+          class="c-form_item-label c-form_item-label--required total-field_label"
+          >待合计字段</label
+        >
+        <el-select
+          class="c-form_item-content"
+          v-model="inputValue.totalField"
+          clearable
+          filterable
+          size="small"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in fields"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button size="small" @click="handleClose">取消</el-button>
+      <el-button size="small" @click="handleReset">清 空</el-button>
       <el-button type="primary" size="small" @click="handleConfirm"
         >确 定</el-button
       >
@@ -52,7 +62,6 @@
 </template>
 
 <script>
-
 export default {
   props: {
     title: String,
@@ -62,9 +71,10 @@ export default {
   },
   data() {
     return {
-      groupField: '',
-      totalField: '',
-      inputValue: {},
+      inputValue: {
+        groupField: "",
+        totalField: "",
+      },
     };
   },
   computed: {
@@ -80,18 +90,11 @@ export default {
   watch: {
     value(val) {
       const data = val || {};
-      if(_.isEqual(data, this.inputValue)) return;
-      this.groupField = data.groupField || '';
-      this.totalField = data.totalField || '';
+      if (_.isEqual(data, this.inputValue)) return;
+
+      this.inputValue.groupField = data.groupField || '';
+      this.inputValue.totalField = data.totalField || '';
     },
-    groupField(val) {
-      this.inputValue.groupField = val;
-    },
-    totalField(val) {
-      this.inputValue.totalField = val;
-    },
-  },
-  mounted() {
   },
   methods: {
     // 切换显示
@@ -100,17 +103,28 @@ export default {
     },
     // 数据验证
     validator() {
-      
+      const inputValue = this.inputValue;
+      if (!inputValue.groupField) {
+        this.$message.error("分组字段不能为空");
+        return false;
+      }
+      if (!inputValue.totalField) {
+        this.$message.error("待合计字段不能为空");
+        return false;
+      }
+      return true;
     },
     // 筛选确认
     handleConfirm() {
       if (!this.validator()) return;
 
       this.switchDialogVisible(false);
-      this.$emit(
-        "confirm",
-        this.inputValue
-      );
+      this.$emit("confirm", _.clone(this.inputValue));
+    },
+    // 清空
+    handleReset() {
+      this.switchDialogVisible(false);
+      this.$emit("confirm", {});
     },
     // 关闭
     handleClose() {

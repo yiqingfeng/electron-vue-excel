@@ -6,7 +6,7 @@
         <el-button
           v-if="hasSheetData"
           type="primary"
-          size="medium"
+          size="small"
           @click="importFiel"
           >导入</el-button>
       </div>
@@ -23,7 +23,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import DList from "../components/list/list.vue";
-// import { sendMessageToMain, registerChannels } from "../data/index";
+import { sendMessageToMain, registerChannels } from "../data/index";
 
 export default {
   components: {
@@ -48,31 +48,31 @@ export default {
     return {
     };
   },
-  // mounted() {
-  //   registerChannels({
-  //     "render-get_excel_data": {
-  //       listener: (event, data) => {
-  //         const excelSheets = Object.keys(data)
-  //           .map((key) => {
-  //             return {
-  //               name: key,
-  //               data: data[key].data,
-  //               keys: data[key].keys,
-  //             };
-  //           })
-  //           .filter((i) => i.data.length);
-  //         this.setSheetLists(excelSheets);
-  //       },
-  //     },
-  //   });
-  // },
+  mounted() {
+    registerChannels({
+      "render-get_excel_data": {
+        listener: (event, data) => {
+          const excelSheets = Object.keys(data)
+            .map((key) => {
+              return {
+                name: key,
+                data: data[key].data,
+                keys: data[key].keys,
+              };
+            })
+            .filter((i) => i.data.length);
+          this.setSheetLists(excelSheets);
+        },
+      },
+    });
+  },
   methods: {
     ...mapMutations([
       "setSheetLists",
       "setCurtSheet"
     ]),
     importFiel() {
-      // sendMessageToMain("main-get_excel_data");
+      sendMessageToMain("main-get_excel_data");
     },
   },
 };

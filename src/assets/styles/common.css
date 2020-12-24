@@ -313,3 +313,26 @@ template {
 .m-c-dialog .el-dialog__footer {
   padding: 0 16px 20px;
 }
+.c-form_item {
+  display: flex;
+  align-items: center;
+}
+.c-form_item-label {
+  width: 120px;
+  margin-right: 8px;
+}
+.c-form_item-label--required::before {
+  content: '*';
+  margin-right: 3px;
+  color: #fc3d3d;
+}
+.c-form_item-content {
+  flex: 1;
+}
+.c-form_item + .c-form_item {
+  margin-top: 10px;
+}
+.c-table td,
+.c-table th {
+  padding: 6px 0;
+}
