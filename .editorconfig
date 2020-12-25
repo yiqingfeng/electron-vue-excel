@@ -9,8 +9,8 @@ charset = utf-8
 end_of_line = lf
 # 使用空格缩进
 indent_style = space
-# 空格缩进值为2
-indent_size = 2
+# 空格缩进值为4
+indent_size = 4
 # 文件尾部以空行结束
 insert_final_newline = true
 
