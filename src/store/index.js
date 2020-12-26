@@ -4,41 +4,41 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
-  state: {
-    sheetLists: [],
-    curtSheet: '',
-  },
-  getters: {
-    hasSheetData(state) {
-      return state.sheetLists.length < 1;
+    state: {
+        sheetLists: [],
+        curtSheet: ''
     },
-    sheetLists(state) {
-      return state.sheetLists;
+    getters: {
+        hasSheetData(state) {
+            return state.sheetLists.length < 1
+        },
+        sheetLists(state) {
+            return state.sheetLists
+        },
+        curtSheet(state) {
+            return state.curtSheet
+        },
+        sheetNames(state) {
+            return state.sheetLists.map(i => i.name)
+        },
+        curtSheetData(state) {
+            const curtSheetName = state.curtSheet
+            return (
+                state.sheetLists.find(sheet => {
+                    return sheet.name === curtSheetName
+                }) || {}
+            )
+        }
     },
-    curtSheet(state) {
-      return state.curtSheet;
+    mutations: {
+        setSheetLists(state, list) {
+            state.sheetLists = list || []
+            state.curtSheet = list ? list[0].name : ''
+        },
+        setCurtSheet(state, name) {
+            state.curtSheet = name || ''
+        }
     },
-    sheetNames(state) {
-      return state.sheetLists.map(i => i.name);
-    },
-    curtSheetData(state) {
-      const curtSheetName = state.curtSheet;
-      return state.sheetLists.find(sheet => {
-        return sheet.name === curtSheetName;
-      }) || {};
-    },
-  },
-  mutations: {
-    setSheetLists(state, list) {
-      state.sheetLists = list || [];
-      state.curtSheet = list? list[0].name : '';
-    },
-    setCurtSheet(state, name) {
-      state.curtSheet = name || '';
-    },
-  },
-  actions: {
-  },
-  modules: {
-  }
+    actions: {},
+    modules: {}
 })
