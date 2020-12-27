@@ -1,7 +1,7 @@
 /**
  * @description 渲染进程入口 - 网页入口
  */
-import './preload'
+import './node/renderer/preload'
 import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'

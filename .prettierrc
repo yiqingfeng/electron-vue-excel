@@ -1,4 +1,5 @@
 {
+    "arrowParens": "always",
     "eslintIntegration": true,
     "stylelintIntegration": true,
     "tabWidth": 4,

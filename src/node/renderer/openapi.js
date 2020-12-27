@@ -18,22 +18,24 @@ function getExcelJSONData(callBack) {
     if (!channelMaps.has(EXCEL_JSON_DATA_CHANNEL)) {
         const listener = function(event, data) {
             const excelSheets = Object.keys(data)
-                .map(key => {
+                .map((key) => {
                     return {
                         name: key,
                         data: data[key].data,
                         keys: data[key].keys
                     }
                 })
-                .filter(i => i.data.length)
+                .filter((i) => i.data.length)
 
             // 执行任务队列
-            _.compose(...tasks)(excelSheets)
-            tasks
+            for(let task of tasks) {
+                task(excelSheets);
+            }
+            tasks.clear()
         }
         channelMaps.set(EXCEL_JSON_DATA_CHANNEL, listener)
         registerChannels({
-            [EXCEL_JSON_DATA_CHANNEL]: listener
+            [EXCEL_JSON_DATA_CHANNEL]: { listener }
         })
     }
 
@@ -42,6 +44,14 @@ function getExcelJSONData(callBack) {
         tasks.add(callBack)
     }
     sendMessageToMain('main-get_excel_json_data')
+}
+
+/**
+ * 指定格式数据保存为 excel 文件
+ * @param {*} channel
+ */
+function exportExcelFile(data) {
+    sendMessageToMain('main-export_excel_file', data)
 }
 
 /**
@@ -58,5 +68,6 @@ function clearChannel(channel) {
 
 export default {
     getExcelJSONData,
+    exportExcelFile,
     clearChannel
 }

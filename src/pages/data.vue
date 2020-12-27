@@ -7,8 +7,8 @@
                     v-if="hasSheetData"
                     type="primary"
                     size="small"
-                    @click="importFiel"
-                    >导入</el-button
+                    @click="importExcel"
+                    >导入Excel</el-button
                 >
             </div>
         </header>
@@ -29,7 +29,6 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import DList from '../components/list/list.vue'
-import { sendMessageToMain, registerChannels } from '../data/index'
 
 export default {
     components: {
@@ -49,28 +48,21 @@ export default {
     data() {
         return {}
     },
-    mounted() {
-        registerChannels({
-            'render-get_excel_data': {
-                listener: (event, data) => {
-                    const excelSheets = Object.keys(data)
-                        .map((key) => {
-                            return {
-                                name: key,
-                                data: data[key].data,
-                                keys: data[key].keys,
-                            }
-                        })
-                        .filter((i) => i.data.length)
-                    this.setSheetLists(excelSheets)
-                },
-            },
-        })
-    },
     methods: {
         ...mapMutations(['setSheetLists', 'setCurtSheet']),
-        importFiel() {
-            sendMessageToMain('main-get_excel_data')
+        importExcel() {
+            FE.openApi.getExcelJSONData((data) => {
+                const excelSheets = Object.keys(data)
+                    .map((key) => {
+                        return {
+                            name: data[key].name,
+                            data: data[key].data,
+                            keys: data[key].keys,
+                        }
+                    })
+                    .filter((i) => i.data.length)
+                this.setSheetLists(excelSheets)
+            })
         },
     },
 }

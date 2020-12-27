@@ -4,7 +4,7 @@
 import lodash from 'lodash'
 global._ = lodash
 
-import openApi from './node/renderer/openapi'
+import openApi from './openapi'
 global.FE = {
     openApi
 }
