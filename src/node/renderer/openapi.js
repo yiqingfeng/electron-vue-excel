@@ -29,6 +29,7 @@ function getExcelJSONData(callBack) {
 
             // 执行任务队列
             for(let task of tasks) {
+                console.log(excelSheets);
                 task(excelSheets);
             }
             tasks.clear()
