@@ -6,7 +6,7 @@
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
-import './node/main/preload'
+// import './node/main/preload'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -58,6 +58,7 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+    require('./node/main/preload')
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {
