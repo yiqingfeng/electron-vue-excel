@@ -1,0 +1,22 @@
+// out: false
+
+html,
+body,
+#app {
+    height: 100%;
+}
+
+// 布局容器
+.i-container {
+    display: flex;
+    &_aside {
+        flex-grow: 0;
+        flex-shrink: 0;
+        overflow: auto;
+    }
+    &_main {
+        flex: 1;
+        overflow: auto;
+    }
+}
+

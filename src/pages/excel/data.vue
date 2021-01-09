@@ -28,7 +28,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import DList from '../components/list/list.vue'
+import DList from '@/components/list/list.vue'
 
 export default {
     components: {

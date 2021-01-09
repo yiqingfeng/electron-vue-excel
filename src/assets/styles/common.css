@@ -304,6 +304,23 @@ template {
 [hidden] {
   display: none;
 }
+html,
+body,
+#app {
+  height: 100%;
+}
+.i-container {
+  display: flex;
+}
+.i-container_aside {
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: auto;
+}
+.i-container_main {
+  flex: 1;
+  overflow: auto;
+}
 .m-c-dialog .el-dialog__header {
   padding: 20px 16px 0;
 }

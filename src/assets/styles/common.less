@@ -1,54 +1,57 @@
 /* 通用样式处理 */
 @import './normalize.less';
+@import './base.less';
 
-.d-g-page {}
+.d-g-page {
+}
 
 .m-c-dialog {
-  .el-dialog__header {
-    padding: 20px 16px 0;
-  }
+    .el-dialog__header {
+        padding: 20px 16px 0;
+    }
 
-  .el-dialog__body {
-    padding: 16px;
-  }
+    .el-dialog__body {
+        padding: 16px;
+    }
 
-  .el-dialog__footer {
-    padding: 0 16px 20px;
-  }
+    .el-dialog__footer {
+        padding: 0 16px 20px;
+    }
 }
 
 // 表单公用
 .c-form {
-  &_item {
-    display: flex;
-    align-items: center;
+    &_item {
+        display: flex;
+        align-items: center;
 
-    &-label {
-      width: 120px;
-      margin-right: 8px;
+        &-label {
+            width: 120px;
+            margin-right: 8px;
 
-      &--required {
-        &::before {
-          content: '*';
-          margin-right: 3px;
-          color: rgb(252, 61, 61);
+            &--required {
+                &::before {
+                    content: '*';
+                    margin-right: 3px;
+                    color: rgb(252, 61, 61);
+                }
+            }
         }
-      }
-    }
 
-    &-content {
-      flex: 1;
-    }
+        &-content {
+            flex: 1;
+        }
 
-    +.c-form_item {
-      margin-top: 10px;
+        + .c-form_item {
+            margin-top: 10px;
+        }
     }
-  }
 }
 
 // 表格公用
 .c-table {
-  td,th {
-    padding: 6px 0;
-  }
+    td,
+    th {
+        padding: 6px 0;
+    }
 }
