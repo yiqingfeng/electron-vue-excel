@@ -1,8 +1,6 @@
 <template>
     <div id="app" class="i-container">
-        <div class="i-container_aside">
-            <nav-sections />
-        </div>
+        <nav-sections class="i-container_aside" />
         <div class="i-container_main">
             <router-view />
         </div>

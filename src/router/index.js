@@ -24,6 +24,12 @@ const routes = [
     //     component: () =>
     //         import(/* webpackChunkName: "about" */ '../views/About.vue')
     // }
+    // 测试相关页面
+    {
+        path: '/test',
+        name: 'TestPage',
+        component: () => import('../pages/test/index.vue'),
+    }
 ]
 
 const router = new VueRouter({
